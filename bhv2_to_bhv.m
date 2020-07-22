@@ -13,6 +13,7 @@ bhv_struct.CodeNumbers = cellfun(@(x) x.CodeNumbers, ...
     {bhv2_struct.BehavioralCodes}, 'UniformOutput', false);
 bhv_struct.ReactionTime = [bhv2_struct.ReactionTime]';
 bhv_struct.ObjectStatusRecord = [bhv2_struct.ObjectStatusRecord]';
+bhv_struct.AnalogData = [bhv2_struct.AnalogData];
 temp = [bhv2_struct.RewardRecord]';
 [temp.RewardOnTime] = temp.StartTimes;
 [temp.RewardOffTime] = temp.EndTimes;
@@ -25,12 +26,8 @@ for i = 1:length(bhv2_struct)
     for j = 1:length(fnames)
         bhv_struct.UserVars.(fnames{j}){i} = bhv2_struct(i).UserVars.(fnames{j});
     end
-    fnames = fields(bhv2_struct(i).AnalogData);
-    for j = 1:length(fnames)
-        bhv_struct.AnalogData.(fnames{j}){i} = bhv2_struct(i).AnalogData.(fnames{j});
-    end
+    bhv_struct.AnalogData(i).EyeSignal = bhv_struct.AnalogData(i).Eye;
 end
-bhv_struct.AnalogData.EyeSignal = bhv_struct.AnalogData.Eye;
 % The following are not included, due to format changes.
 %    'VariableChanges'
 %    'CycleRate'
