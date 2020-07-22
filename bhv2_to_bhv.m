@@ -1,19 +1,19 @@
 function [ bhv_struct ] = bhv2_to_bhv( bhv2_struct, condpath )
 
 bhv_struct = struct();
-bhv_struct.TrialNumber = [bhv2_struct.Trial];
-bhv_struct.BlockNumber = [bhv2_struct.Block];
-bhv_struct.TrialWithinBlock = [bhv2_struct.TrialWithinBlock];
-bhv_struct.ConditionNumber = [bhv2_struct.Condition];
-bhv_struct.AbsoluteTrialStartTime = [bhv2_struct.AbsoluteTrialStartTime];
+bhv_struct.TrialNumber = [bhv2_struct.Trial]';
+bhv_struct.BlockNumber = [bhv2_struct.Block]';
+bhv_struct.TrialWithinBlock = [bhv2_struct.TrialWithinBlock]';
+bhv_struct.ConditionNumber = [bhv2_struct.Condition]';
+bhv_struct.AbsoluteTrialStartTime = [bhv2_struct.AbsoluteTrialStartTime]';
 bhv_struct.TrialError = [bhv2_struct.TrialError]';
 bhv_struct.CodeTimes = cellfun(@(x) x.CodeTimes, ...
     {bhv2_struct.BehavioralCodes}, 'UniformOutput', false);
 bhv_struct.CodeNumbers = cellfun(@(x) x.CodeNumbers, ...
     {bhv2_struct.BehavioralCodes}, 'UniformOutput', false);
-bhv_struct.ReactionTime = [bhv2_struct.ReactionTime];
-bhv_struct.ObjectStatusRecord = [bhv2_struct.ObjectStatusRecord];
-temp = [bhv2_struct.RewardRecord];
+bhv_struct.ReactionTime = [bhv2_struct.ReactionTime]';
+bhv_struct.ObjectStatusRecord = [bhv2_struct.ObjectStatusRecord]';
+temp = [bhv2_struct.RewardRecord]';
 [temp.RewardOnTime] = temp.StartTimes;
 [temp.RewardOffTime] = temp.EndTimes;
 temp = rmfield(temp, 'StartTimes');
@@ -39,7 +39,7 @@ bhv_struct.AnalogData.EyeSignal = bhv_struct.AnalogData.Eye;
 objs = {bhv2_struct.TaskObject};
 conds = unique([bhv2_struct.Condition]);
 columns = max(cellfun(@length, objs));
-bhv_struct.TaskObject = [bhv2_struct.TaskObject];
+bhv_struct.TaskObject = [bhv2_struct.TaskObject]';
 % cell(length(conds), columns);
 % for c = 1:length(conds)
 %     cond = conds(c);
