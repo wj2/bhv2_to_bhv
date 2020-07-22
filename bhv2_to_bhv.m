@@ -21,7 +21,14 @@ temp = [bhv2_struct.RewardRecord];
 [temp.RewardOffTime] = temp.EndTimes;
 temp = rmfield(temp, 'StartTimes');
 bhv_struct.RewardRecord = rmfield(temp, 'EndTimes');
-bhv_struct.UserVars = [bhv2_struct.UserVars];
+
+bhv_struct.UserVars = struct();
+for i = 1:length(bhv2_struct)
+    fnames = fields(bhv2_struct(i).UserVars);
+    for j = 1:length(fnames)
+        bhv_struct.UserVars.(fnames{j}){i} = bhv2_struct(i).UserVars.(fnames{j});
+    end
+end
 % The following are not included, due to format changes.
 %    'VariableChanges'
 %    'CycleRate'
@@ -30,43 +37,47 @@ bhv_struct.UserVars = [bhv2_struct.UserVars];
 objs = {bhv2_struct.TaskObject};
 conds = unique([bhv2_struct.Condition]);
 columns = max(cellfun(@length, objs));
-bhv_struct.TaskObject = cell(length(conds), columns);
-for c = 1:length(conds)
-    cond = conds(c);
-    egs = objs([bhv2_struct.Condition] == cond);
-    eg = egs{1};
-    l = length(eg);
-    for j = 1:l
-        if length(eg{l}) <= 3
-            cstr = sprintf('%s(%d, %d)', eg{l}{:});
-        else
-            cstr = sprintf('%s(%s, %d, %d)', eg{l}{:});
-        end
-        bhv_struct.TaskObject{c, j} = cstr;
-    end
-end
+bhv_struct.TaskObject = [bhv2_struct.TaskObject];
+% cell(length(conds), columns);
+% for c = 1:length(conds)
+%     cond = conds(c);
+%     egs = objs([bhv2_struct.Condition] == cond);
+%     eg = egs{1};
+%     eg.CurrentConditionInfo
+%     l = length(eg);
+%     length(conds)
+%     for j = 1:l
+%         if length(eg{l}) <= 3
+%             cstr = sprintf('%s(%d, %d)', eg{l}{:});
+%         else
+%             cstr = sprintf('%s(%s, %d, %d)', eg{l}{:});
+%         end
+%         bhv_struct.TaskObject{c, j} = cstr;
+%     end
+% end
 
-cond_whitespace = '\t';
-cond_header = 1;
-txtspec = '%s%s%s%s%s%s%s%s%s%s';
-condfile = textscan(fopen(condpath), txtspec, 'Whitespace', cond_whitespace);
-infoByCond = cell(length(conds), 1);
-for i = 1:length(condfile)
-    if strcmp(condfile{i}{1}, 'Info')
-        for j = 1:length(conds)
-            entr = strsplit(condfile{i}{j+cond_header}, ',');
-            st = struct();
-            for k = 1:length(entr)/2
-                entrInd = 2*k - 1;
-                field = strrep(entr{entrInd}, '''', '');
-                val = strrep(entr{entrInd+1}, '''', '');
-                st.(field) = val;
-                infoByCond{j} = st;
+if exist('condpath', 'var')
+    cond_whitespace = '\t';
+    cond_header = 1;
+    txtspec = '%s%s%s%s%s%s%s%s%s%s';
+    condfile = textscan(fopen(condpath), txtspec, 'Whitespace', cond_whitespace);
+    infoByCond = cell(length(conds), 1);
+    for i = 1:length(condfile)
+        if strcmp(condfile{i}{1}, 'Info')
+            for j = 1:length(conds)
+                entr = strsplit(condfile{i}{j+cond_header}, ',');
+                st = struct();
+                for k = 1:length(entr)/2
+                    entrInd = 2*k - 1;
+                    field = strrep(entr{entrInd}, '''', '');
+                    val = strrep(entr{entrInd+1}, '''', '');
+                    st.(field) = val;
+                    infoByCond{j} = st;
+                end
             end
         end
     end
+    bhv_struct.InfoByCond = infoByCond;
 end
-bhv_struct.InfoByCond = infoByCond;
-
 end
 
