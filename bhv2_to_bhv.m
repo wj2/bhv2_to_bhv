@@ -26,8 +26,14 @@ for i = 1:length(bhv2_struct)
     for j = 1:length(fnames)
         bhv_struct.UserVars.(fnames{j}){i} = bhv2_struct(i).UserVars.(fnames{j});
     end
-    bhv_struct.AnalogData(i).EyeSignal = bhv_struct.AnalogData(i).Eye;
+    bhv_struct.AnalogData(i).EyeSignal = {bhv_struct.AnalogData(i).Eye};
 end
+fnames = fields(bhv2_struct(i).UserVars);
+for j = 1:length(fnames)
+    bhv_struct.UserVars.(fnames{j}) = [bhv_struct.UserVars.(fnames{j})];
+end
+        
+
 % The following are not included, due to format changes.
 %    'VariableChanges'
 %    'CycleRate'
